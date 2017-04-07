@@ -28,6 +28,16 @@ if [[ -z "$KAFKA_ADVERTISED_HOST_NAME" && -n "$HOSTNAME_COMMAND" ]]; then
     export KAFKA_ADVERTISED_HOST_NAME=$(eval $HOSTNAME_COMMAND)
 fi
 
+# Use rancher host IP
+if [[ -n "$KAFKA_ADVERTISED_HOST_NAME" ]]; then
+    export KAFKA_ADVERTISED_HOST_NAME=$(curl http://rancher-metadata.rancher.internal/latest/self/host/agent_ip)
+fi
+
+# Use rancher label az to specify rack to ensure replication happens accross availability zones
+if [[ -n "$KAFKA_BROKER_RACK" ]]; then
+    export KAFKA_BROKER_RACK=$(curl http://rancher-metadata.rancher.internal/latest/self/host/labels/az)
+fi
+
 for VAR in `env`
 do
   if [[ $VAR =~ ^KAFKA_ && ! $VAR =~ ^KAFKA_HOME ]]; then
