@@ -38,6 +38,9 @@ if [[ -n "$KAFKA_BROKER_RACK" ]]; then
     export KAFKA_BROKER_RACK=$(curl http://rancher-metadata.rancher.internal/latest/self/host/labels/az)
 fi
 
+echo $KAFKA_ADVERTISED_HOST_NAME
+echo $KAFKA_BROKER_RACK
+
 for VAR in `env`
 do
   if [[ $VAR =~ ^KAFKA_ && ! $VAR =~ ^KAFKA_HOME ]]; then
