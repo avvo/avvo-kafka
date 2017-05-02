@@ -55,9 +55,9 @@ done
 cp ${KAFKA_CONFIG_TEMPLATE} ${KAFKA_CONFIG}
 
 # Populate template
-sed -i.bak s/<broker_id>/${BROKER_ID}/g ${KAFKA_CONFIG}
-sed -i.bak s/<broker_host>/${BROKER_HOST}/g ${KAFKA_CONFIG}
-sed -i.bak s/<zookeeper_hosts>/${ZOOKEEPER_HOSTS}/g ${KAFKA_CONFIG}
+sed -i.bak s/\<broker_id\>/${BROKER_ID}/g ${KAFKA_CONFIG}
+sed -i.bak s/\<broker_host\>/${BROKER_HOST}/g ${KAFKA_CONFIG}
+sed -i.bak s/\<zookeeper_hosts\>/${ZOOKEEPER_HOSTS}/g ${KAFKA_CONFIG}
 
 # Configure JMX
 export KAFKA_JMX_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=${BROKER_HOST} -Dcom.sun.management.jmxremote.rmi.port=${JMX_PORT}"

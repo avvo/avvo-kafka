@@ -15,6 +15,6 @@ RUN curl -o /tmp/kafka.tgz http://mirrors.sonic.net/apache/kafka/${KAFKA_VERSION
 
 RUN mkdir -p /opt/data/kafka
 
-ADD config /opt
+ADD config /opt/config
 ADD entrypoint.sh /opt/entrypoint.sh
 ENTRYPOINT ["/opt/entrypoint.sh"]
