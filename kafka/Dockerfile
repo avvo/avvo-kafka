@@ -9,7 +9,6 @@ RUN apk add --no-cache --update \
     bash
 
 RUN curl -o /tmp/kafka.tgz http://mirrors.sonic.net/apache/kafka/${KAFKA_VERSION}/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz && \
-    mkdir /opt && \
     tar -C /opt -xf /tmp/kafka.tgz && \
     ln -s /opt/kafka_${SCALA_VERSION}-${KAFKA_VERSION} /opt/kafka && \
     rm -rf /tmp/* /var/cache/apk/*
