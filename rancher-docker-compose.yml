@@ -1,7 +1,7 @@
 version: '2'
 services:
   broker:
-    image: azuretek/kafka:0.10.2.0
+    image: avvo/kafka:rancher-kafka-0.10.2.0
     environment:
       KAFKA_HEAP_OPTS: -Xmx1024m -Xms1024m
       JMX_PORT: 9999
@@ -15,7 +15,7 @@ services:
     labels:
       io.rancher.scheduler.affinity:host_label: facing=backend
   zk:
-    image: azuretek/zookeeper:0.10.2.0
+    image: avvo/zookeeper:rancher-zookeeper-3.4.9
     environment:
       KAFKA_HEAP_OPTS: -Xmx1024m -Xms1024m
       JMX_PORT: 9998
@@ -44,7 +44,7 @@ services:
       io.rancher.scheduler.affinity:host_label: facing=backend
       io.rancher.sidekicks: dd-agent-config
   dd-agent-config:
-    image: azuretek/rancher-kafka-dd:v0.1
+    image: avvo/rancher-kafka-dd:v0.1
     environment:
       KAFKA_SERVICE: kafka/broker
       ZK_SERVICE: kafka/zk
