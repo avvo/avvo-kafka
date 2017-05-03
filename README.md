@@ -14,3 +14,27 @@ Zookeeper: 3.3.6 (3.3.5 is used in Cloudera but there is no current download ava
 ## Running
 
 You can use the provided `docker-compose.yml` file to run zookeeper and kafka locally
+
+# Rancher Kafka/Zookeeper
+
+These images only work when used with rancher.
+
+## Current Versions
+
+Kafka: 0.10.2.0
+Zookeeper: 3.4.9
+
+## Environment Variables
+
+Any environment variables that Kafka supports are usable.
+
+These are the only mandatory variables:
+
+Kafka:
+* JMX_PORT: 9999 (port 9999 is the default for datadog monitoring)
+* ZK_SERVICE: kafka/zk (format: stack/service)
+
+Zookeeper:
+* JMX_PORT: 9998 (port 9998 is the default but it's not in use)
+* ZK_SERVICE: kafka/zk (format: stack/service)
+

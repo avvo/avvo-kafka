@@ -1,0 +1,68 @@
+version: '2'
+services:
+  broker:
+    image: avvo/kafka:rancher-kafka-0.10.2.0
+    environment:
+      KAFKA_HEAP_OPTS: -Xmx1024m -Xms1024m
+      JMX_PORT: 9999
+      ZK_SERVICE: kafka/zk
+    tty: true
+    ports:
+    - 9092:9092/tcp
+    - 9999:9999/tcp
+    links:
+    - zk:zk
+    labels:
+      io.rancher.scheduler.affinity:host_label: facing=backend
+  zk:
+    image: avvo/zookeeper:rancher-zookeeper-3.4.9
+    environment:
+      KAFKA_HEAP_OPTS: -Xmx1024m -Xms1024m
+      JMX_PORT: 9998
+      ZK_SERVICE: kafka/zk
+    tty: true
+    ports:
+    - 2181:2181/tcp
+    - 2888:2888/tcp
+    - 3888:3888/tcp
+    - 9998:9998/tcp
+    labels:
+      io.rancher.scheduler.affinity:host_label: facing=backend
+  dd-agent:
+    image: datadog/docker-dd-agent:latest-jmx
+    entrypoint: /opt/rancher/scripts/entrypoint-wrapper.sh
+    environment:
+      API_KEY: <dd api key>
+      DD_APM_ENABLED: 'false'
+      DD_LOG_LEVEL: INFO
+    volumes_from:
+    - dd-agent-config
+    links:
+    - broker:broker
+    - zk:zk
+    labels:
+      io.rancher.scheduler.affinity:host_label: facing=backend
+      io.rancher.sidekicks: dd-agent-config
+  dd-agent-config:
+    image: avvo/rancher-kafka-dd:v0.1
+    environment:
+      KAFKA_SERVICE: kafka/broker
+      ZK_SERVICE: kafka/zk
+      JMX_PORT: 9999
+    volumes:
+    - /opt/rancher
+    labels:
+      io.rancher.scheduler.affinity:host_label: facing=backend
+      io.rancher.container.start_once: 'true'
+  kafka-manager:
+    image: sheepkiller/kafka-manager:alpine
+    environment:
+      APPLICATION_SECRET: 'letmein'
+      ZK_HOSTS: 'zk.kafka:2181'
+    links:
+    - broker:broker
+    - zk:zk
+    ports: 
+    - 9000:9000/tcp
+    labels:
+      io.rancher.scheduler.affinity:host_label: facing=frontend
