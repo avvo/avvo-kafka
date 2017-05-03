@@ -39,15 +39,16 @@ ZK_HOSTS=()
 get_container_ips ZK_HOSTS $ZK_STACK $ZK_SERVICE
 
 BROKER_ID=$(curl -s ${RANCHER_METADATA}/self/container/service_index)
-BROKER_HOST=$(curl -s ${RANCHER_METADATA}/self/host/agent_ip)
+BROKER_IP=$(curl -s ${RANCHER_METADATA}/self/host/agent_ip)
 
 DELIM=''
+ZOOKEEPER_HOSTS=''
 for host in "${ZK_HOSTS[@]}"; do
   ZK_ID=$(echo $host | awk -F ':' {'print $1'})
   ZK_IP=$(echo $host | awk -F ':' {'print $2'})
   ZK_PORT=$(echo $host | awk -F ':' {'print $3'})
 
-  ZOOKEEPER_HOSTS="${DELIM}${ZK_IP}:${ZK_PORT}"
+  ZOOKEEPER_HOSTS="${ZOOKEEPER_HOSTS}${DELIM}${ZK_IP}:${ZK_PORT}"
   DELIM=','
 done
 
@@ -56,13 +57,11 @@ cp ${KAFKA_CONFIG_TEMPLATE} ${KAFKA_CONFIG}
 
 # Populate template
 sed -i.bak s/\<broker_id\>/${BROKER_ID}/g ${KAFKA_CONFIG}
-sed -i.bak s/\<broker_host\>/${BROKER_HOST}/g ${KAFKA_CONFIG}
+sed -i.bak s/\<broker_ip\>/${BROKER_IP}/g ${KAFKA_CONFIG}
 sed -i.bak s/\<zookeeper_hosts\>/${ZOOKEEPER_HOSTS}/g ${KAFKA_CONFIG}
 
 # Configure JMX
-export KAFKA_JMX_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=${BROKER_HOST} -Dcom.sun.management.jmxremote.rmi.port=${JMX_PORT}"
+export KAFKA_JMX_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=${BROKER_IP} -Dcom.sun.management.jmxremote.rmi.port=${JMX_PORT}"
 
-while [ 1 ]; do
-  echo 'test'
-  sleep 60
-done
+exec /opt/kafka/bin/kafka-server-start.sh ${KAFKA_CONFIG}
+
