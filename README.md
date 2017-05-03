@@ -8,7 +8,7 @@ because the tags on docker hub do not contain the versions we need.
 
 ## Current Versions
 
-Kafka: 0.10.2.0
+Kafka: 0.8.2.1
 Zookeeper: 3.3.6 (3.3.5 is used in Cloudera but there is no current download available for it)
 
 ## Running
