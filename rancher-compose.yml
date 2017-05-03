@@ -11,6 +11,10 @@ services:
       unhealthy_threshold: 3
       interval: 5000
       strategy: recreate
+  broker-volume:
+    retain_ip: true
+    scale: 3
+    start_on_create: true
   zk:
     retain_ip: true
     scale: 3
@@ -22,6 +26,10 @@ services:
       unhealthy_threshold: 3
       interval: 5000
       strategy: recreate
+  zk-volume:
+    retain_ip: true
+    scale: 3
+    start_on_create: true
   dd-agent:
     scale: 1
     start_on_create: true
