@@ -1,0 +1,33 @@
+version: '2'
+services:
+  broker:
+    retain_ip: true
+    scale: 3
+    start_on_create: true
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 5000
+      port: 9092
+      unhealthy_threshold: 3
+      interval: 5000
+      strategy: recreate
+  zk:
+    retain_ip: true
+    scale: 3
+    start_on_create: true
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 5000
+      port: 2181
+      unhealthy_threshold: 3
+      interval: 5000
+      strategy: recreate
+  dd-agent:
+    scale: 1
+    start_on_create: true
+  dd-agent-conf:
+    scale: 1
+    start_on_create: true
+  kafka-manager:
+    scale: 1
+    start_on_create: true
