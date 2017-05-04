@@ -6,6 +6,8 @@ services:
       KAFKA_HEAP_OPTS: -Xmx1024m -Xms1024m
       JMX_PORT: 9999
       ZK_SERVICE: kafka/zk
+    volumes_from:
+    - broker-volume
     tty: true
     ports:
     - 9092:9092/tcp
@@ -14,12 +16,27 @@ services:
     - zk:zk
     labels:
       io.rancher.scheduler.affinity:host_label: facing=backend
+      io.rancher.sidekicks: broker-volume
+  broker-volume:
+    image: rawmind/alpine-volume:0.0.2-1
+    environment:
+      SERVICE_UID: 0
+      SERVICE_GID: 0
+      SERVICE_VOLUME: /opt/data/kafka
+    volumes:
+    - /opt/data/kafka
+    network_mode: none
+    labels:
+      io.rancher.container.hostname_override: container_name
+      io.rancher.container.start_once: true
   zk:
     image: avvo/zookeeper:rancher-zookeeper-3.4.9
     environment:
       KAFKA_HEAP_OPTS: -Xmx1024m -Xms1024m
       JMX_PORT: 9998
       ZK_SERVICE: kafka/zk
+    volumes_from:
+    - zk-volume
     tty: true
     ports:
     - 2181:2181/tcp
@@ -28,6 +45,19 @@ services:
     - 9998:9998/tcp
     labels:
       io.rancher.scheduler.affinity:host_label: facing=backend
+      io.rancher.sidekicks: zk-volume
+  zk-volume:
+    image: rawmind/alpine-volume:0.0.2-1
+    environment:
+      SERVICE_UID: 0
+      SERVICE_GID: 0
+      SERVICE_VOLUME: /opt/data/zookeeper
+    volumes:
+    - /opt/data/zookeeper
+    network_mode: none
+    labels:
+      io.rancher.container.hostname_override: container_name
+      io.rancher.container.start_once: true
   dd-agent:
     image: datadog/docker-dd-agent:latest-jmx
     entrypoint: /opt/rancher/scripts/entrypoint-wrapper.sh
