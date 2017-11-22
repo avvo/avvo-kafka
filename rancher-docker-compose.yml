@@ -92,7 +92,5 @@ services:
     links:
     - broker:broker
     - zk:zk
-    ports: 
-    - 9000:9000/tcp
     labels:
-      io.rancher.scheduler.affinity:host_label: facing=frontend
+      io.rancher.scheduler.affinity:host_label: facing=backend
